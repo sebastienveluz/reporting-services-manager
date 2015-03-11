@@ -4,7 +4,6 @@ function ConnectionWB ($ReportServerUri){
 }
 
 function GetItemType($item){
-    
         if($item.TypeName -eq "Folder"){
             return "folder";
         } elseif($item.TypeName -eq "Report"){
@@ -63,11 +62,9 @@ function ListReport($ReportServerUri, $targetPath){
 
 function ListDataSourceReport($ReportServerUri, $report){
     $Proxy = ConnectionWB -ReportServerUri $ReportServerUri;
-    $Proxy.GetItemDataSources($report);
+    $items=$Proxy.GetItemDataSources($report);
     $items | ForEach-Object {
-        $typeItem = GetItemType -item $_;
-        if($typeItem -eq "report"){
-            $_;
-        }
+        $_.name;
     }
 }
+
