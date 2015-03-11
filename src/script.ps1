@@ -8,6 +8,8 @@ function GetItemType($item){
             return "folder";
         } elseif($item.TypeName -eq "Report"){
             return "report";
+        } elseif($item.TypeName -eq "DataSource"){
+            return "datasource";
         } else {
             return "other";
         }
@@ -67,4 +69,20 @@ function ListDataSourceReport($ReportServerUri, $report){
         write-output "$($_.name): $($_.Item.reference)";
     }
 }
+
+function ListDataSource($ReportServerUri){
+    $Proxy = ConnectionWB -ReportServerUri $ReportServerUri;
+    $items=$Proxy.ListChildren("/", $true);
+    $items | ForEach-Object {
+        $typeItem = GetItemType -item $_;
+        if($typeItem -eq "datasource"){
+            $disp = New-Object PSObject;
+            $disp | Add-Member NoteProperty Datasource ($_.name);
+            $disp | Add-Member NoteProperty Path ($_.path);
+            $disp | Add-Member NoteProperty Description ($_.description);
+            write-output $disp;
+        }
+    }
+}
+
 
