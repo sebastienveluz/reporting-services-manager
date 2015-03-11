@@ -34,6 +34,13 @@ with parameters:
 * ReportServerUri: web service url
 * targetPath: path
 
+### List all reports on a specific path (recursive)
+> ListAllReports -ReportServerUri "https://server/service_path/ReportService2010.asmx?wsdl"
+
+with parameters:
+* ReportServerUri: web service url
+* targetPath: path
+
 ### List all datasources for a specific report
 > ListDataSourceReport -ReportServerUri "https://server/service_path/ReportService2010.asmx?wsdl" -report "report_path"
 
@@ -42,6 +49,8 @@ with parameters:
 * report: the complete path of the report
 
 ### List all datasources on the server
-ListDataSource -ReportServerUri "https://server/service_path/ReportService2010.asmx?wsdl"
+> ListDataSource -ReportServerUri "https://server/service_path/ReportService2010.asmx?wsdl"
+
 with parameters:
 * ReportServerUri: web service url
+

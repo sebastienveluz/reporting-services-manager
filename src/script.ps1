@@ -62,6 +62,29 @@ function ListReport($ReportServerUri, $targetPath){
         $typeItem = GetItemType -item $_;
         if($typeItem -eq "report"){
             $disp = New-Object PSObject;
+            
+            $dtSources= "";
+            $datasources=$Proxy.GetItemDataSources($_.path);
+            $datasources | ForEach-Object {
+                $dtSources+=$_.name+ " | ";
+            }
+            
+            $disp | Add-Member NoteProperty Report ($_.name);
+            $disp | Add-Member NoteProperty Path ($_.path);
+            $disp | Add-Member NoteProperty Description ($_.description);
+            $disp | Add-Member NoteProperty Datasources ($dtSources);
+            write-output $disp;
+        }
+    }
+}
+
+function ListAllReports($ReportServerUri, $targetPath){
+    $Proxy = ConnectionWB -ReportServerUri $ReportServerUri;
+    $items = $proxy.ListChildren($targetPath, $true)
+    $items | ForEach-Object {
+        $typeItem = GetItemType -item $_;
+        if($typeItem -eq "report"){
+            $disp = New-Object PSObject;
             $disp | Add-Member NoteProperty Report ($_.name);
             $disp | Add-Member NoteProperty Path ($_.path);
             $disp | Add-Member NoteProperty Description ($_.description);
@@ -96,4 +119,3 @@ function ListDataSource($ReportServerUri){
         }
     }
 }
-
