@@ -64,7 +64,7 @@ function ListDataSourceReport($ReportServerUri, $report){
     $Proxy = ConnectionWB -ReportServerUri $ReportServerUri;
     $items=$Proxy.GetItemDataSources($report);
     $items | ForEach-Object {
-        $_.name;
+        write-output "$($_.name): $($_.Item.reference)";
     }
 }
 
