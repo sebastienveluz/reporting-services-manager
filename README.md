@@ -41,3 +41,7 @@ with parameters:
 * ReportServerUri: web service url
 * report: the complete path of the report
 
+### List all datasources on the server
+ListDataSource -ReportServerUri "https://server/service_path/ReportService2010.asmx?wsdl"
+with parameters:
+* ReportServerUri: web service url
