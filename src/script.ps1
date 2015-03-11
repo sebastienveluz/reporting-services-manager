@@ -39,7 +39,11 @@ function ListFolder($ReportServerUri, $targetPath){
     $items | ForEach-Object {
         $typeItem = GetItemType -item $_;
         if($typeItem -eq "folder"){
-            $_;
+            $disp = New-Object PSObject;
+            $disp | Add-Member NoteProperty Report ($_.name);
+            $disp | Add-Member NoteProperty Path ($_.path);
+            $disp | Add-Member NoteProperty Description ($_.description);
+            write-output $disp;
         }
     }
 }
@@ -57,7 +61,11 @@ function ListReport($ReportServerUri, $targetPath){
     $items | ForEach-Object {
         $typeItem = GetItemType -item $_;
         if($typeItem -eq "report"){
-            $_;
+            $disp = New-Object PSObject;
+            $disp | Add-Member NoteProperty Report ($_.name);
+            $disp | Add-Member NoteProperty Path ($_.path);
+            $disp | Add-Member NoteProperty Description ($_.description);
+            write-output $disp;
         }
     }
 }
@@ -66,7 +74,11 @@ function ListDataSourceReport($ReportServerUri, $report){
     $Proxy = ConnectionWB -ReportServerUri $ReportServerUri;
     $items=$Proxy.GetItemDataSources($report);
     $items | ForEach-Object {
-        write-output "$($_.name): $($_.Item.reference)";
+        $disp = New-Object PSObject;
+        $disp | Add-Member NoteProperty Report ($report);
+        $disp | Add-Member NoteProperty Datasource ($_.name);
+        $disp | Add-Member NoteProperty Reference ($_.Item.reference);
+        write-output $disp;
     }
 }
 
@@ -84,5 +96,4 @@ function ListDataSource($ReportServerUri){
         }
     }
 }
-
 
