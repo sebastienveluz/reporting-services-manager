@@ -5,9 +5,9 @@ function ConnectionWB ($ReportServerUri){
 
 function GetItemType($item){
     
-        if($_.TypeName -eq "Folder"){
+        if($item.TypeName -eq "Folder"){
             return "folder";
-        } elseif($_.TypeName -eq "Report"){
+        } elseif($item.TypeName -eq "Report"){
             return "report";
         } else {
             return "other";
@@ -32,7 +32,7 @@ function CreateFolder ($ReportServerUri, $folderName, $folderPath){
     $newFolder = $proxy.CreateFolder($folderName, $folderPath, $properties);
 }
 
-function ListFolderUnder($ReportServerUri, $targetPath){
+function ListFolder($ReportServerUri, $targetPath){
     $Proxy = ConnectionWB -ReportServerUri $ReportServerUri;
     $items = $Proxy.ListChildren($folderPath, $false);
     $items | ForEach-Object {
@@ -50,9 +50,20 @@ function CreateCatalogItem($ReportServerUri, $reportPath, $reportName, $rdlFile)
     $proxy.CreateCatalogItem("Report", $reportName, $reportPath, $true, $cat, $null, [ref]$warnings)
 }
 
-function ListReportUnder($ReportServerUri, $targetPath){
+function ListReport($ReportServerUri, $targetPath){
     $Proxy = ConnectionWB -ReportServerUri $ReportServerUri;
     $items = $proxy.ListChildren($targetPath, $false)
+    $items | ForEach-Object {
+        $typeItem = GetItemType -item $_;
+        if($typeItem -eq "report"){
+            $_;
+        }
+    }
+}
+
+function ListDataSourceReport($ReportServerUri, $report){
+    $Proxy = ConnectionWB -ReportServerUri $ReportServerUri;
+    $Proxy.GetItemDataSources($report);
     $items | ForEach-Object {
         $typeItem = GetItemType -item $_;
         if($typeItem -eq "report"){
