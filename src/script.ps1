@@ -16,7 +16,6 @@ function GetItemType($item){
 }
 
 function CreateFolder ($ReportServerUri, $folderName, $folderPath){
-    #$Proxy = New-WebServiceProxy -Uri $ReportServerUri -UseDefaultCredential ;
     $Proxy = ConnectionWB -ReportServerUri $ReportServerUri;
 
     $type = $Proxy.GetType().Namespace
@@ -48,11 +47,25 @@ function ListFolder($ReportServerUri, $targetPath){
     }
 }
 
-function CreateCatalogItem($ReportServerUri, $reportPath, $reportName, $rdlFile){
+function UploadReport($ReportServerUri, $reportPath, $reportName, $rdlFile){
     $Proxy = ConnectionWB -ReportServerUri $ReportServerUri;
     $cat = Get-Content $rdlFile -Encoding byte;
     $warnings= @();
-    $proxy.CreateCatalogItem("Report", $reportName, $reportPath, $true, $cat, $null, [ref]$warnings)
+    $report = $proxy.CreateCatalogItem("Report", $reportName, $reportPath, $true, $cat, $null, [ref]$warnings)
+
+    $dtSources= "";
+    $datasources=$Proxy.GetItemDataSources($report.path);
+    $datasources | ForEach-Object {
+        $dtSources+=$_.name+ "(" + $_.Item.reference + ") | ";
+    }
+    write-output "Report is created: $($report.name) !";
+    $disp = New-Object PSObject;
+    $disp | Add-Member NoteProperty Report ($report.name);
+    $disp | Add-Member NoteProperty Path ($report.path);
+    $disp | Add-Member NoteProperty Description ($report.description);
+    $disp | Add-Member NoteProperty Datasources ($dtSources);
+    write-output $disp;
+
 }
 
 function ListReport($ReportServerUri, $targetPath){
@@ -119,3 +132,4 @@ function ListDataSource($ReportServerUri){
         }
     }
 }
+

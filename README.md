@@ -11,8 +11,8 @@ with parameters:
 * folderName: name of the folder
 * folderpath: path of the folder ("/" for root)
 
-### Create a report (get online with a rdl file)
-> CreateCatalogItem -ReportServerUri "https://server/service_path/ReportService2010.asmx?wsdl" -reportPath "/" -reportName "Report Name" -rdlFile "report.rdl"
+### Create a report (get online with a rdl file, local to server)
+> UploadReport -ReportServerUri "https://server/service_path/ReportService2010.asmx?wsdl" -reportPath "/" -reportName "Report Name" -rdlFile "report.rdl"
 
 with parameters:
 * ReportServerUri: web service url
