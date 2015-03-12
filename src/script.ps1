@@ -110,10 +110,17 @@ function ListDataSourceReport($ReportServerUri, $report){
     $Proxy = ConnectionWB -ReportServerUri $ReportServerUri;
     $items=$Proxy.GetItemDataSources($report);
     $items | ForEach-Object {
+        
+        $dsDef = $Proxy.GetDataSourceContents($_.Item.reference);        
+
         $disp = New-Object PSObject;
         $disp | Add-Member NoteProperty Report ($report);
         $disp | Add-Member NoteProperty Datasource ($_.name);
         $disp | Add-Member NoteProperty Reference ($_.Item.reference);
+        $disp | Add-Member NoteProperty Type ($dsDef.Extension);
+        $disp | Add-Member NoteProperty ConnectString ($dsDef.ConnectString);
+        $disp | Add-Member NoteProperty Credential ($dsDef.CredentialRetrieval);
+        $disp | Add-Member NoteProperty Enabled ($dsDef.Enabled);
         write-output $disp;
     }
 }
@@ -170,7 +177,7 @@ function CreateDataSource($ReportServerUri, $DataSourceName, $ConnectionString, 
     }
 
     $dtCreated = $Proxy.CreateDataSource($DataSourceName,"/DataSources",$true,$DataSource,$null);
-    $dtDefCreated = $proxy.GetDataSourceContents($dtCreated.path);
+    $dtDefCreated = $Proxy.GetDataSourceContents($dtCreated.path);
     
     $disp = New-Object PSObject;
     $disp | Add-Member NoteProperty Datasource ($dtCreated.name);
@@ -178,8 +185,7 @@ function CreateDataSource($ReportServerUri, $DataSourceName, $ConnectionString, 
     $disp | Add-Member NoteProperty Type ($dtDefCreated.Extension);
     $disp | Add-Member NoteProperty ConnectString ($dtDefCreated.ConnectString);
     $disp | Add-Member NoteProperty Credential ($dtDefCreated.CredentialRetrieval);
-    $disp | Add-Member NoteProperty Enable ($dtDefCreated.Enabled);
+    $disp | Add-Member NoteProperty Enabled ($dtDefCreated.Enabled);
     write-output $disp;
     
 }
-
