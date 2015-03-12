@@ -54,3 +54,13 @@ with parameters:
 with parameters:
 * ReportServerUri: web service url
 
+### Create a datasource
+> CreateDataSource -ReportServerUri "https://server/service_path/ReportService2010.asmx?wsdl" -DataSourceName "DatasourceName" -ConnectionString "Data Source=name;initial catalog=catalog_name" -CredType s -CredUsername "username" -CredPassword "password"
+
+with parameters:
+* ReportServerUri: web service url
+* DataSourceName: name of the datasource
+* ConnectionString: connection string definition
+* CredType: (p)rompt, (s)tore, (i)ntegrated, (n)one
+* CredUsername: username when CredType = s
+* CredPassword: password when CredType = s

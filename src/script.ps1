@@ -133,3 +133,53 @@ function ListDataSource($ReportServerUri){
     }
 }
 
+function CreateDataSource($ReportServerUri, $DataSourceName, $ConnectionString, $CredType, $CredUsername, $CredPassword){
+    #CredType #0:(p)rompt, 1:(s)tore, 2:(i)ntegrated, 3:(n)one
+    
+    $Proxy = ConnectionWB -ReportServerUri $ReportServerUri;
+    $DataSource = New-Object ($Proxy.GetType().Namespace + '.DataSourceDefinition');
+    $Cred = New-Object ($Proxy.GetType().Namespace + '.CredentialRetrievalEnum');
+    
+    $DataSource.ConnectString = $ConnectionString;
+    $DataSource.enabled = $true;
+    $DataSource.EnabledSpecified = $true;
+    $DataSource.Extension = "SQL";
+    $DataSource.Prompt = $null;
+
+    $DataSource.ImpersonateUserSpecified = $false;
+    $DataSource.WindowsCredentials = $false
+
+    if ($CredType -eq 'p'){
+        $Cred.value__ = 0;
+    } elseif ($CredType -eq 's'){
+        $Cred.value__ = 1;
+    } elseif ($CredType -eq 'i') {
+        $Cred.value__ = 2;    
+    } elseif ($CredType -eq 'n') {
+        $Cred.value__ = 3;
+    }
+
+    $DataSource.CredentialRetrieval = $Cred;
+
+    if ($CredUsername){
+        $DataSource.UserName = $CredUsername;
+    }
+
+    if ($CredPassword){
+        $DataSource.Password =$CredPassword;
+    }
+
+    $dtCreated = $Proxy.CreateDataSource($DataSourceName,"/DataSources",$true,$DataSource,$null);
+    $dtDefCreated = $proxy.GetDataSourceContents($dtCreated.path);
+    
+    $disp = New-Object PSObject;
+    $disp | Add-Member NoteProperty Datasource ($dtCreated.name);
+    $disp | Add-Member NoteProperty Path ($dtCreated.path);
+    $disp | Add-Member NoteProperty Type ($dtDefCreated.Extension);
+    $disp | Add-Member NoteProperty ConnectString ($dtDefCreated.ConnectString);
+    $disp | Add-Member NoteProperty Credential ($dtDefCreated.CredentialRetrieval);
+    $disp | Add-Member NoteProperty Enable ($dtDefCreated.Enabled);
+    write-output $disp;
+    
+}
+
