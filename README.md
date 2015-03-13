@@ -72,3 +72,12 @@ with parameters:
 with parameters
 * ReportServerUri: web service url
 * ReportName: name of the report (use can use * for searching a report)
+
+### 
+> SetDatasourceReport -ReportServerUri "https://server/service_path/ReportService2010.asmx?wsdl" -reportPath "report_path" -datasource "datasource" -newDataSourcePath "newdatasource_reference_path"
+
+with parameters
+* ReportServerUri: web service url
+* reportPath: Report path
+* datasource: Datasource name (will be linked with the datasource with the path newDataSourcePath)
+* newDataSourcePath: Datasource reference

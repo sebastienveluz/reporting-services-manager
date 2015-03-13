@@ -161,3 +161,23 @@ function ReportProperties ($ReportServerUri, $ReportName){
         Where-Object Path -Like $ReportName |
         Where TypeName -eq "Report" 
 }
+
+function SetDatasourceReport($ReportServerUri, $reportPath, $datasource, $newDataSourcePath){
+    $Proxy = ConnectionWB -ReportServerUri $ReportServerUri;
+    $type = $proxy.GetType().Namespace
+
+    $dataSource = $($Proxy.GetItemDataSources($reportPath)) | Where-Object Name -eq $datasource
+
+    $dataSourceType = ($type + '.DataSource')
+    $numItems = 1
+    $dataSourceArrayType = ($type + '.DataSource[]')
+    $dataSourceReferenceType = ($type + '.DataSourceReference')
+
+    $dataSourceArray = New-Object ($datasourceArrayType)$numItems
+    $dataSourceArray[0] = New-Object ($dataSourceType)
+    $dataSourceArray[0].Name = $dataSource.Name
+    $dataSourceArray[0].Item = New-Object ($dataSourceReferenceType)
+    $dataSourceArray[0].Item.Reference = $newDataSourcePath
+
+    $proxy.SetItemDataSources($reportPath, $dataSourceArray)
+}
