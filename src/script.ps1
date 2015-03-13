@@ -3,21 +3,21 @@ function ConnectionWB ($ReportServerUri){
     
 }
 
-function CreateFolder ($ReportServerUri, $folderName, $folderPath){
+function CreateFolder ($ReportServerUri, $folderName, $folderPath, $folderDescription){
     $Proxy = ConnectionWB -ReportServerUri $ReportServerUri;
 
     $type = $Proxy.GetType().Namespace
     $datatype = ($type + '.Property')
             
-    $property =New-Object ($datatype);
-    $property.Name = $folderName
-    $property.Value = $folderName
+    $property =New-Object ($datatype)
+    $property.Name = "Description"
+    $property.Value = $folderDescription
             
     $numproperties = 1
     $properties = New-Object ($datatype + '[]')$numproperties 
-    $properties[0] = $property;
+    $properties[0] = $property
      
-    $newFolder = $proxy.CreateFolder($folderName, $folderPath, $properties);
+    $newFolder = $proxy.CreateFolder($folderName, $folderPath, $properties)
 }
 
 function ListFolder($ReportServerUri, $targetPath){

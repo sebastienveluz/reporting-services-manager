@@ -4,12 +4,13 @@ Base on powershell this (basic) tool is used to manage reporting services (SSRS)
 ## Commands decription
 
 ### Create a folder
-> CreateFolder -ReportServerUri reportServerUri -folderName foldername -folderPath "/"
+> CreateFolder -ReportServerUri reportServerUri -folderName foldername -folderPath "/" -folderDescription "Description"
 
 with parameters:
 * ReportServerUri: web service url
 * folderName: name of the folder
 * folderpath: path of the folder ("/" for root)
+* folderDescription: Set description properties to the created folder
 
 ### Create a report (get online with a rdl file, local to server)
 > UploadReport -ReportServerUri "https://server/service_path/ReportService2010.asmx?wsdl" -reportPath "/" -reportName "Report Name" -rdlFile "report.rdl"
@@ -66,8 +67,8 @@ with parameters:
 * CredPassword: password when CredType = s
 
 ### Get report properties
-> ReportProperties -ReportServerUri "https://server/service_path/ReportService2010.asmx?wsdl" -Report "path_to_report"
+> ReportProperties -ReportServerUri "https://server/service_path/ReportService2010.asmx?wsdl" -ReportName "ReportName"
 
 with parameters
 * ReportServerUri: web service url
-* Report: full path to the report
+* ReportName: name of the report (use can use * for searching a report)
