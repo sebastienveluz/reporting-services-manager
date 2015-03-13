@@ -3,18 +3,6 @@ function ConnectionWB ($ReportServerUri){
     
 }
 
-function GetItemType($item){
-        if($item.TypeName -eq "Folder"){
-            return "folder";
-        } elseif($item.TypeName -eq "Report"){
-            return "report";
-        } elseif($item.TypeName -eq "DataSource"){
-            return "datasource";
-        } else {
-            return "other";
-        }
-}
-
 function CreateFolder ($ReportServerUri, $folderName, $folderPath){
     $Proxy = ConnectionWB -ReportServerUri $ReportServerUri;
 
@@ -34,17 +22,10 @@ function CreateFolder ($ReportServerUri, $folderName, $folderPath){
 
 function ListFolder($ReportServerUri, $targetPath){
     $Proxy = ConnectionWB -ReportServerUri $ReportServerUri;
-    $items = $Proxy.ListChildren($folderPath, $false);
-    $items | ForEach-Object {
-        $typeItem = GetItemType -item $_;
-        if($typeItem -eq "folder"){
-            $disp = New-Object PSObject;
-            $disp | Add-Member NoteProperty Report ($_.name);
-            $disp | Add-Member NoteProperty Path ($_.path);
-            $disp | Add-Member NoteProperty Description ($_.description);
-            write-output $disp;
-        }
-    }
+    $Proxy.ListChildren($targetPath, $false) | 
+            Where TypeName -eq "Folder" | 
+            Select Name, Path, Description, CreationDate |
+            Format-Table -AutoSize
 }
 
 function UploadReport($ReportServerUri, $reportPath, $reportName, $rdlFile){
@@ -70,11 +51,11 @@ function UploadReport($ReportServerUri, $reportPath, $reportName, $rdlFile){
 
 function ListReport($ReportServerUri, $targetPath){
     $Proxy = ConnectionWB -ReportServerUri $ReportServerUri;
-    $items = $proxy.ListChildren($targetPath, $false)
+    $items = $proxy.ListChildren($targetPath, $true);
     $items | ForEach-Object {
-        $typeItem = GetItemType -item $_;
-        if($typeItem -eq "report"){
+        if($_.TypeName -eq "report"){
             $disp = New-Object PSObject;
+
             
             $dtSources= "";
             $datasources=$Proxy.GetItemDataSources($_.path);
@@ -93,17 +74,7 @@ function ListReport($ReportServerUri, $targetPath){
 
 function ListAllReports($ReportServerUri, $targetPath){
     $Proxy = ConnectionWB -ReportServerUri $ReportServerUri;
-    $items = $proxy.ListChildren($targetPath, $true)
-    $items | ForEach-Object {
-        $typeItem = GetItemType -item $_;
-        if($typeItem -eq "report"){
-            $disp = New-Object PSObject;
-            $disp | Add-Member NoteProperty Report ($_.name);
-            $disp | Add-Member NoteProperty Path ($_.path);
-            $disp | Add-Member NoteProperty Description ($_.description);
-            write-output $disp;
-        }
-    }
+    $proxy.ListChildren($targetPath, $true) | Where TypeName -eq "Report" | Select Name, Path, CreationDate |  Format-Table -AutoSize
 }
 
 function ListDataSourceReport($ReportServerUri, $report){
@@ -127,17 +98,11 @@ function ListDataSourceReport($ReportServerUri, $report){
 
 function ListDataSource($ReportServerUri){
     $Proxy = ConnectionWB -ReportServerUri $ReportServerUri;
-    $items=$Proxy.ListChildren("/", $true);
-    $items | ForEach-Object {
-        $typeItem = GetItemType -item $_;
-        if($typeItem -eq "datasource"){
-            $disp = New-Object PSObject;
-            $disp | Add-Member NoteProperty Datasource ($_.name);
-            $disp | Add-Member NoteProperty Path ($_.path);
-            $disp | Add-Member NoteProperty Description ($_.description);
-            write-output $disp;
-        }
-    }
+    $Proxy.ListChildren("/", $true) |
+        Where TypeName -eq "DataSource" |
+        Select Name, Path, Description, CreationDate, CreatedBy, ModifiedBy, ModifiedDate |
+        Format-Table -AutoSize
+        
 }
 
 function CreateDataSource($ReportServerUri, $DataSourceName, $ConnectionString, $CredType, $CredUsername, $CredPassword){
