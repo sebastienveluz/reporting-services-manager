@@ -13,13 +13,14 @@ with parameters:
 * folderDescription: Set description properties to the created folder
 
 ### Create a report (get online with a rdl file, local to server)
-> UploadReport -ReportServerUri "https://server/service_path/ReportService2010.asmx?wsdl" -reportPath "/" -reportName "Report Name" -rdlFile "report.rdl"
+> UploadReport -ReportServerUri "https://server/service_path/ReportService2010.asmx?wsdl" -reportPath "/" -reportName "Report Name" -rdlFile "report.rdl" -description "Report Description"
 
 with parameters:
 * ReportServerUri: web service url
 * reportPath: path of the report
 * reportName: Name of the report
 * rdlFile: SSRS report (*.rdl file)
+* description: SSRS description
 
 ### List all folders on a specific path (non recursive)
 > ListFolder -ReportServerUri "https://server/service_path/ReportService2010.asmx?wsdl" -targetPath "/";

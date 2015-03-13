@@ -28,11 +28,22 @@ function ListFolder($ReportServerUri, $targetPath){
             Format-Table -AutoSize
 }
 
-function UploadReport($ReportServerUri, $reportPath, $reportName, $rdlFile){
+function UploadReport($ReportServerUri, $reportPath, $reportName, $rdlFile, $description){
     $Proxy = ConnectionWB -ReportServerUri $ReportServerUri;
+    $type = $Proxy.GetType().Namespace
+
+    $datatype = ($type + '.Property')
+    $property =New-Object ($datatype)
+    $property.Name = "Description"
+    $property.Value = $description
+
+    $numproperties = 1
+    $properties = New-Object ($datatype + '[]')$numproperties 
+    $properties[0] = $property
+
     $cat = Get-Content $rdlFile -Encoding byte;
     $warnings= @();
-    $report = $proxy.CreateCatalogItem("Report", $reportName, $reportPath, $true, $cat, $null, [ref]$warnings)
+    $report = $proxy.CreateCatalogItem("Report", $reportName, $reportPath, $true, $cat, $properties, [ref]$warnings)
 
     $dtSources= "";
     $datasources=$Proxy.GetItemDataSources($report.path);
@@ -43,7 +54,7 @@ function UploadReport($ReportServerUri, $reportPath, $reportName, $rdlFile){
     $disp = New-Object PSObject;
     $disp | Add-Member NoteProperty Report ($report.name);
     $disp | Add-Member NoteProperty Path ($report.path);
-    $disp | Add-Member NoteProperty Description ($report.description);
+    $disp | Add-Member NoteProperty ModifiedDate ($report.ModifiedDate);
     $disp | Add-Member NoteProperty Datasources ($dtSources);
     write-output $disp;
 
