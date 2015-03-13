@@ -64,3 +64,10 @@ with parameters:
 * CredType: (p)rompt, (s)tore, (i)ntegrated, (n)one
 * CredUsername: username when CredType = s
 * CredPassword: password when CredType = s
+
+### Get report properties
+> ReportProperties -ReportServerUri "https://server/service_path/ReportService2010.asmx?wsdl" -Report "path_to_report"
+
+with parameters
+* ReportServerUri: web service url
+* Report: full path to the report

@@ -154,3 +154,12 @@ function CreateDataSource($ReportServerUri, $DataSourceName, $ConnectionString, 
     write-output $disp;
     
 }
+
+function ReportProperties ($ReportServerUri, $ReportName){
+    $Proxy = ConnectionWB -ReportServerUri $ReportServerUri;
+    $proxy.ListChildren("/", $true) |
+        Where-Object Path -Like $ReportName |
+        Where TypeName -eq "Report" 
+}
+
+ReportProperties -ReportServerUri "https://reporting.adb.intra.admin.ch/Reports/ReportService2010.asmx?wsdl" -ReportName "*Installierte*"
