@@ -161,5 +161,3 @@ function ReportProperties ($ReportServerUri, $ReportName){
         Where-Object Path -Like $ReportName |
         Where TypeName -eq "Report" 
 }
-
-ReportProperties -ReportServerUri "https://reporting.adb.intra.admin.ch/Reports/ReportService2010.asmx?wsdl" -ReportName "*Installierte*"
